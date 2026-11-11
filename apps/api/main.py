@@ -25,7 +25,8 @@ from database.models import (User, Repository, RepoSettings, PullRequest, Review
 from apps.api.auth import (hash_password, verify_password, create_token,
                            get_current_user, require_role, can_access_repo,
                            can_admin_repo)
-from integrations.github import verify_signature, GitHubClient
+from integrations.github import verify_signature, GitHubClient, fetch_repo_files, RepoFetchError
+from integrations.repo_names import normalize_repo_full_name
 from indexer.incremental import index_files
 from services.review import run_review, gate_for
 from apps.worker.queue import enqueue_review
@@ -98,8 +99,15 @@ def _ensure_settings(db, repo: Repository) -> RepoSettings:
     return repo.settings
 
 def repo_out(r: Repository) -> dict:
-    return {"id": r.id, "full_name": r.full_name, "name": r.name,
+    # Display the canonical name: rows stored before normalization existed
+    # (e.g. a full https://github.com/... URL) are shown as owner/repo.
+    try:
+        full_name = normalize_repo_full_name(r.full_name)
+    except ValueError:
+        full_name = r.full_name
+    return {"id": r.id, "full_name": full_name, "name": r.name,
             "default_branch": r.default_branch, "languages": r.languages or [],
+            "clone_url": r.clone_url or "",
             "head_sha": r.head_sha, "index_status": r.index_status,
             "last_indexed_at": r.last_indexed_at.isoformat() if r.last_indexed_at else None,
             "is_demo": r.is_demo, "created_at": r.created_at.isoformat() if r.created_at else None}
@@ -199,19 +207,34 @@ def github_callback(code: str, db: Session = Depends(get_db)):
 def list_repos(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     repos = db.query(Repository).all()
     visible = [r for r in repos if can_access_repo(user, r)]
-    return [repo_out(r) for r in visible]
+    # Defensive dedupe: rows stored before name normalization (e.g. a full
+    # https://github.com/... URL and the same repo with a .git suffix) are
+    # the same repository — show each canonical name once (lowest id wins).
+    seen: dict[str, Repository] = {}
+    for r in sorted(visible, key=lambda x: x.id):
+        try:
+            key = normalize_repo_full_name(r.full_name)
+        except ValueError:
+            key = r.full_name
+        seen.setdefault(key, r)
+    return [repo_out(r) for r in seen.values()]
 
 @app.post("/api/repos")
 def create_repo(body: RepoIn, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    if db.query(Repository).filter_by(full_name=body.full_name).first():
+    try:
+        full_name = normalize_repo_full_name(body.full_name)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    if db.query(Repository).filter_by(full_name=full_name).first():
         raise HTTPException(400, "Repository already connected")
-    repo = Repository(full_name=body.full_name, name=body.full_name.split("/")[-1],
-                      default_branch=body.default_branch, clone_url=body.clone_url,
+    repo = Repository(full_name=full_name, name=full_name.split("/")[-1],
+                      default_branch=body.default_branch,
+                      clone_url=body.clone_url or f"https://github.com/{full_name}.git",
                       owner_id=user.id)
     db.add(repo)
     db.commit()
     _ensure_settings(db, repo)
-    _audit(db, user.email, "repo_connected", repo.id, {"full_name": body.full_name})
+    _audit(db, user.email, "repo_connected", repo.id, {"full_name": full_name})
     return repo_out(repo)
 
 @app.get("/api/repos/{repo_id}")
@@ -256,8 +279,15 @@ def patch_settings(repo_id: int, body: SettingsIn, db: Session = Depends(get_db)
 @app.post("/api/repos/{repo_id}/reindex")
 def reindex(repo_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user),
             files: dict[str, str] | None = None):
-    """Full re-index (admin action). In production the worker clones the repo;
-    this endpoint accepts an explicit file map for local/demo use."""
+    """Full re-index (admin action).
+
+    File source, in order: an explicit file map in the request body (local /
+    test use) -> the bundled demo files for demo repos -> a live fetch from
+    GitHub for real repos (public repos need no token; private repos use
+    GITHUB_TOKEN or the GitHub App installation token). A fetch failure is
+    reported as 502 and the repo is marked ``failed`` — it is never silently
+    recorded as ``indexed`` with 0 symbols.
+    """
     repo = _repo_or_404(db, repo_id)
     if not can_admin_repo(user, repo):
         raise HTTPException(403, "Only a repository admin may re-index")
@@ -266,18 +296,39 @@ def reindex(repo_id: int, db: Session = Depends(get_db), user: User = Depends(ge
         raise HTTPException(409, "Indexing is paused for this repository")
     repo.index_status = "indexing"
     db.commit()
+    head_sha = repo.head_sha
+    files_fetched = None
     try:
-        stats = index_files(db, repo, files or {}, head_sha=repo.head_sha,
+        if files:
+            pass  # explicit file map supplied by the caller
+        elif repo.is_demo:
+            files = _demo_files()
+            files_fetched = len(files)
+        else:
+            files, fetched_sha = fetch_repo_files(
+                repo.full_name, ref=repo.default_branch or None)
+            files_fetched = len(files)
+            if fetched_sha:
+                head_sha = fetched_sha
+        stats = index_files(db, repo, files or {}, head_sha=head_sha,
                             excludes=st.excluded_paths)
         repo.index_status = "indexed"
+        repo.head_sha = head_sha
         repo.last_indexed_at = datetime.now(timezone.utc)
         db.commit()
+    except RepoFetchError as e:
+        repo.index_status = "failed"
+        db.commit()
+        raise HTTPException(502, f"Could not fetch repository from GitHub: {e}")
     except Exception as e:
         repo.index_status = "failed"
         db.commit()
         raise HTTPException(500, f"Re-index failed: {e}")
     _audit(db, user.email, "reindex", repo.id, stats)
-    return {"status": "indexed", **stats}
+    out = {"status": "indexed", **stats}
+    if files_fetched is not None:
+        out["files_fetched"] = files_fetched
+    return out
 
 @app.post("/api/repos/{repo_id}/purge")
 def purge(repo_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user),
@@ -586,6 +637,10 @@ async def github_webhook(request: Request, db: Session = Depends(get_db)):
     except Exception:
         raise HTTPException(400, "Invalid JSON payload")
     repo_name = (data.get("repository") or {}).get("full_name", "")
+    try:
+        repo_name = normalize_repo_full_name(repo_name) if repo_name else ""
+    except ValueError:
+        pass  # keep the raw name; the lookup below will simply miss
     record = WebhookDelivery(delivery_id=delivery_id, event=event,
                              repo_full_name=repo_name, payload=data, status="received")
     db.add(record)
