@@ -1,4 +1,9 @@
 # GitHub Setup
+>
+> **Live deployment checklist:** `docs/github-app-setup.md` — exact webhook
+> URL, Render env vars, App permissions/events, PAT fallback, and the
+> verification steps for https://codesentry-backend-hl76.onrender.com.
+> The steps below are the generic version of the same setup.
 
 ## 1. Create the GitHub App
 
