@@ -1,0 +1,24 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+SQLAlchemy==2.0.36
+PyJWT==2.10.1
+httpx==0.28.1
+python-multipart==0.0.20
+langgraph==0.2.62
+langchain-core==0.3.33
+tree-sitter==0.25.1
+tree-sitter-python==0.23.6
+tree-sitter-javascript==0.23.1
+tree-sitter-typescript==0.23.2
+# Optional (used only when configured; the system runs without them):
+# sentence-transformers — semantic embeddings (hash fallback is the default)
+# celery==5.4.0 + redis==5.2.1 — queued workers (thread fallback is the default)
+# psycopg2-binary==2.9.10 — Postgres (SQLite is the local default)
+# alembic==1.14.1 — migrations
+celery==5.4.0
+redis==5.2.1
+psycopg2-binary==2.9.10
+alembic==1.14.1
+pytest==8.3.4
+pytest-asyncio==0.24.0
