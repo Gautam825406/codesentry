@@ -28,9 +28,19 @@ export function Overview({ notify, go }: { notify: (m: string) => void; go: (pag
   useEffect(() => {
     Promise.all([get("/metrics"), get("/api/repos"), get("/api/findings")])
       .then(async ([m, r, f]) => {
-        setData(m); setRepos(r); setFindings(f);
+        setData(m); setFindings(f);
+        // GET /api/repos omits the symbol count (only the detail endpoint
+        // adds it), so enrich each row from its detail response — otherwise
+        // the table shows a wrong 0 and a stale index status.
+        const enriched = await Promise.all(r.map(async (repo: any) => {
+          try {
+            const d = await get(`/api/repos/${repo.id}`);
+            return { ...repo, symbols: d.symbols ?? repo.symbols ?? 0, index_status: d.index_status ?? repo.index_status };
+          } catch { return repo; }
+        }));
+        setRepos(enriched);
         const all: any[] = [];
-        for (const repo of r) {
+        for (const repo of enriched) {
           const list = await get(`/api/repos/${repo.id}/prs`).catch(() => []);
           list.forEach((p: any) => all.push({ ...p, repo }));
         }
