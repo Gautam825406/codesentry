@@ -7,6 +7,7 @@ import { Repos, RepoDetail } from "./pages/Repos";
 import { Findings, PRs, ReviewDetail } from "./pages/Findings";
 import { SecurityCenter, Quality, Agents, FineTuning, AuditLogs, SettingsPage, Documentation } from "./pages/Misc";
 import { AppShell, PublicShell, Toasts, type PublicView, type ToastItem, type ToastKind } from "./components/layout";
+import { ErrorBoundary } from "./components/ui";
 
 type UnauthedView = "landing" | "login" | "register" | "docs";
 
@@ -74,6 +75,7 @@ export default function App() {
   return (
     <>
       <AppShell me={me} page={page} go={go} onSignOut={signOut}>
+        <ErrorBoundary key={page} onReset={() => go("overview")}>
         {page === "overview" && <Overview notify={notify} go={go} />}
         {page === "repos" && <Repos notify={notify} go={go} />}
         {page === "repo" && <RepoDetail repoId={arg} notify={notify} go={go} />}
@@ -87,6 +89,7 @@ export default function App() {
         {page === "audit" && <AuditLogs />}
         {page === "settings" && <SettingsPage notify={notify} go={go} />}
         {page === "docs" && <Documentation />}
+        </ErrorBoundary>
       </AppShell>
       <Toasts items={toasts} />
     </>
