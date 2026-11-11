@@ -8,6 +8,10 @@ from database.models import Base
 
 def _engine():
     url = settings.DATABASE_URL
+    if url.startswith("postgres://"):
+        # Render (and Heroku-style) Postgres URLs use postgres://;
+        # SQLAlchemy requires the postgresql:// scheme.
+        url = url.replace("postgres://", "postgresql://", 1)
     if url.startswith("sqlite"):
         return create_engine(url, connect_args={"check_same_thread": False})
     return create_engine(url, pool_pre_ping=True)
