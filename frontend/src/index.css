@@ -12,8 +12,20 @@
 html { color-scheme: dark; }
 body { background: #070b16; color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 ::selection { background: rgba(139, 92, 246, 0.4); }
+
+/* Logo wordmark only — the single gradient in the system. */
 .grad-text { background: linear-gradient(90deg, #a78bfa, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.grad-border { border: 1px solid transparent; background: linear-gradient(#0b1226, #0b1226) padding-box, linear-gradient(90deg, #8b5cf6, #22d3ee) border-box; }
+
 code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
 .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
 .scrollbar-thin::-webkit-scrollbar-thumb { background: #1a2547; border-radius: 4px; }
+
+/* Restrained focus ring used by every interactive element. */
+:focus-visible { outline: 2px solid #8b5cf6; outline-offset: 2px; }
+
+/* Small, fast transitions only — no motion for its own sake. */
+button, a, input, select, textarea { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
