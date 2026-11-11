@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Component, useEffect, useRef, useState, type ReactNode } from "react";
 
 /* ------------------------------------------------------------------ */
 /* Panels                                                              */
@@ -423,4 +423,40 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>
   );
+}
+
+/* ------------------------------------------------------------------ */
+/* Error boundary — one page's render error must never blank the app   */
+/* ------------------------------------------------------------------ */
+
+export class ErrorBoundary extends Component<
+  { children: ReactNode; onReset?: () => void },
+  { hasError: boolean; message: string }
+> {
+  state = { hasError: false, message: "" };
+  static getDerivedStateFromError(err: Error) {
+    return { hasError: true, message: err?.message || "Unknown error" };
+  }
+  componentDidCatch(err: Error) {
+    console.error("CodeSentry page error:", err);
+  }
+  render() {
+    if (!this.state.hasError) return this.props.children;
+    return (
+      <Card className="py-10 text-center">
+        <div className="text-lg font-semibold text-white">This page hit a problem</div>
+        <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
+          {this.state.message} — the rest of the app is still fine. Try again, or go back to the Overview.
+        </p>
+        <div className="mt-4 flex justify-center gap-2">
+          <Btn onClick={() => this.setState({ hasError: false, message: "" })}>Try again</Btn>
+          {this.props.onReset && (
+            <Btn variant="outline" onClick={() => { this.setState({ hasError: false, message: "" }); this.props.onReset?.(); }}>
+              Back to Overview
+            </Btn>
+          )}
+        </div>
+      </Card>
+    );
+  }
 }
