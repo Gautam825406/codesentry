@@ -123,6 +123,17 @@ deterministic engine runs with no keys. For production set at minimum
 `GITHUB_WEBHOOK_SECRET`, and `DATABASE_URL` (Postgres). `GROQ_API_KEY` is
 optional.
 
+Real GitHub repositories need one of the following (see the exact live
+checklist in `docs/github-app-setup.md`):
+
+- `GITHUB_TOKEN` — fine-grained PAT (Contents read, Pull requests
+  read/write, Checks write). Enables private-repo indexing and PR posting.
+  Public repos index without any token (60 req/hr unauthenticated limit).
+- `GITHUB_APP_ID` + `GITHUB_APP_PRIVATE_KEY` — GitHub App credentials.
+  The backend exchanges them for a per-installation token, which is
+  preferred over the PAT when the App is installed on the repository.
+  Webhook URL: `https://codesentry-backend-hl76.onrender.com/webhooks/github`.
+
 ## What it will not do
 
 - No auto-merge and no auto-apply of patches. Humans decide.
@@ -131,8 +142,14 @@ optional.
 - Taint analysis in v1 is heuristic hints, not a verified data-flow proof.
 - Python and JavaScript/TypeScript only in v1.
 - No training on private code without explicit admin opt-in (default off).
-- GitHub posting uses a PAT (`GITHUB_TOKEN`) in v1; App installation-token
-  exchange is the documented hardening step.
+- GitHub posting uses `GITHUB_TOKEN` (PAT) or, when the App is installed
+  on the repository, an App installation token exchanged at request time
+  (`integrations/github.py::get_installation_token_for_repo`).
+- Re-indexing a real repository fetches it from GitHub via the tarball API
+  (public repos need no token); a failed fetch is a 502, never a silent
+  0-symbol "indexed" state. Repository names are normalized to lowercase
+  `owner/repo` on connect, so the same repo cannot be recorded twice under
+  different spellings.
 - Embeddings are deterministic hash vectors by default (not semantic);
   sentence-transformers is optional, pgvector is the documented scale path.
 
@@ -145,12 +162,19 @@ optional.
   promote/rollback are implemented and honest about their state.
 - OSV scanning needs network access; when unreachable it reports
   `unavailable`, never guesses.
+- Push webhooks are recorded but do not trigger an automatic re-index yet;
+  use Full re-index after a push (see `docs/github-app-setup.md` §5).
+- The live deployment uses SQLite on Render's ephemeral disk, so a
+  redeploy wipes all data (repos, demo seed, findings); re-run the demo
+  seed afterwards. Postgres (`DATABASE_URL`) is the durable fix.
 - The worker uses Celery+Redis when configured and an in-process thread queue
   otherwise; the thread fallback is what the demo uses.
 
 ## Roadmap
 
-- App installation-token exchange (replace PAT); per-installation rate limits.
+- Per-installation rate limits; push-webhook auto re-index (the webhook
+  currently records `push` deliveries but does not re-index — use Full
+  re-index after a push).
 - sentence-transformers embeddings by default + pgvector retrieval.
 - Larger labelled set (historical bug-fixing PRs) and per-CWE recall table.
 - Qdrant migration path for large symbol counts; worker sharding by repository.
