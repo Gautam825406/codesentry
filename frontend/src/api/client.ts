@@ -2,11 +2,25 @@ const API_BASE =
   import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "" : "http://localhost:8000");
 
 export function token(): string | null {
-  return localStorage.getItem("cs_token");
+  return localStorage.getItem("cs_token") ?? sessionStorage.getItem("cs_token");
 }
-export function setToken(t: string | null) {
-  if (t) localStorage.setItem("cs_token", t);
-  else localStorage.removeItem("cs_token");
+export function setToken(t: string | null, persist = true) {
+  if (t) {
+    if (persist) {
+      localStorage.setItem("cs_token", t);
+      sessionStorage.removeItem("cs_token");
+    } else {
+      sessionStorage.setItem("cs_token", t);
+      localStorage.removeItem("cs_token");
+    }
+  } else {
+    localStorage.removeItem("cs_token");
+    sessionStorage.removeItem("cs_token");
+  }
+}
+export function clearToken() {
+  localStorage.removeItem("cs_token");
+  sessionStorage.removeItem("cs_token");
 }
 
 export async function api(path: string, opts: RequestInit = {}): Promise<any> {
