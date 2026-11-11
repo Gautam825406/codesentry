@@ -1,1 +1,1 @@
-{"$schema":"https://openapi.vercel.sh/vercel.json","buildCommand":"cd frontend && npm ci && npm run build","framework":"vite","outputDirectory":"frontend/dist","rewrites":[{"destination":"/index.html","source":"/(.*)"}]}
+{"$schema":"https://openapi.vercel.sh/vercel.json","buildCommand":"cd frontend && npm ci && npm run build","framework":"vite","installCommand":"cd frontend && npm ci","outputDirectory":"frontend/dist","rewrites":[{"destination":"/index.html","source":"/(.*)"}]}
