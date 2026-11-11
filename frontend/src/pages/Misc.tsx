@@ -55,11 +55,12 @@ export function Quality({ repoId, notify }: { repoId?: number; notify: (m: strin
   useEffect(() => { get("/api/repos").then((rs) => { setRepos(rs); if (!sel && rs[0]) setSel(rs[0].id); }).catch(() => {}); }, []);
   useEffect(() => { if (sel) get(`/api/repos/${sel}/quality`).then(setQ).catch((e) => setErr(e.message)); }, [sel]);
   void notify;
-  if (repos.length === 0) return <EmptyState title="No repositories yet" body="Connect a repository or run the demo review first." />;
+  // Hooks must stay above the early return (React error #310 otherwise).
   const verdictData = useMemo(() => {
     const entries = objEntries(q?.verdicts);
     return entries.map((d) => ({ ...d, color: d.label === "reject_wrong" ? "#ef4444" : d.label === "accept" || d.label === "fixed" ? "#10b981" : "#64748b" }));
   }, [q]);
+  if (repos.length === 0) return <EmptyState title="No repositories yet" body="Connect a repository or run the demo review first." />;
   return (
     <div className="space-y-6">
       <PageHeader

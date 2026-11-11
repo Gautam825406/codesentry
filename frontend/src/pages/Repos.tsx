@@ -12,7 +12,19 @@ export function Repos({ notify, go }: { notify: (m: string) => void; go: (page: 
   const [err, setErr] = useState("");
   const [sortKey, setSortKey] = useState("full_name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
-  const load = () => get("/api/repos").then(setRepos).catch((e) => setErr(e.message));
+  const load = () => {
+    // GET /api/repos omits the symbol count (only the detail endpoint adds
+    // it), so enrich each row from its detail response; a failed detail
+    // fetch leaves the row as-is instead of showing a wrong 0.
+    get("/api/repos").then(async (rs) => {
+      setRepos(rs);
+      const enriched = await Promise.all(rs.map(async (r: any) => {
+        try { const d = await get(`/api/repos/${r.id}`); return { ...r, symbols: d.symbols ?? r.symbols ?? 0 }; }
+        catch { return r; }
+      }));
+      setRepos(enriched);
+    }).catch((e) => setErr(e.message));
+  };
   useEffect(() => { load(); }, []);
   const connect = async () => {
     try { await post("/api/repos", { full_name: fullName }); setFullName(""); notify("Repository connected."); load(); }
@@ -113,6 +125,20 @@ export function RepoDetail({ repoId, notify, go }: { repoId: number; notify: (m:
     get(`/api/repos/${repoId}/prs`).then(setPrs).catch(() => {});
   };
   useEffect(() => { load(); }, [repoId]);
+  // Hooks must stay above the early returns: a hook below them runs a
+  // different hook count once the repo loads (React error #310) and
+  // unmounts the whole app.
+  const sortedPrs = useMemo(() => {
+    const rows = [...prs];
+    const dir = sortDir === "asc" ? 1 : -1;
+    rows.sort((a, b) => {
+      if (sortKey === "number") return (a.number - b.number) * dir;
+      if (sortKey === "gate") return String(a.run?.gate_result ?? "").localeCompare(String(b.run?.gate_result ?? "")) * dir;
+      if (sortKey === "status") return String(a.run?.status ?? "").localeCompare(String(b.run?.status ?? "")) * dir;
+      return String(a.title ?? "").localeCompare(String(b.title ?? "")) * dir;
+    });
+    return rows;
+  }, [prs, sortKey, sortDir]);
   if (err) return <EmptyState title="Repository not found or not authorised" body={err} />;
   if (!repo) {
     return (
@@ -138,17 +164,6 @@ export function RepoDetail({ repoId, notify, go }: { repoId: number; notify: (m:
     if (key === sortKey) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortKey(key); setSortDir("asc"); }
   };
-  const sortedPrs = useMemo(() => {
-    const rows = [...prs];
-    const dir = sortDir === "asc" ? 1 : -1;
-    rows.sort((a, b) => {
-      if (sortKey === "number") return (a.number - b.number) * dir;
-      if (sortKey === "gate") return String(a.run?.gate_result ?? "").localeCompare(String(b.run?.gate_result ?? "")) * dir;
-      if (sortKey === "status") return String(a.run?.status ?? "").localeCompare(String(b.run?.status ?? "")) * dir;
-      return String(a.title ?? "").localeCompare(String(b.title ?? "")) * dir;
-    });
-    return rows;
-  }, [prs, sortKey, sortDir]);
 
   const prColumns: DataTableColumn[] = [
     { key: "number", label: "PR", sortable: true },
