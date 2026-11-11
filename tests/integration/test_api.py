@@ -101,6 +101,91 @@ def test_purge_verified(auth_client):
     assert r.status_code == 200 and r.json()["verified"] is True
     assert r.json()["remaining_symbols"] == 0
 
+def test_repo_connect_normalizes_and_dedupes(auth_client):
+    """Connect accepts a full GitHub URL, stores canonical owner/repo, and
+    rejects the same repo under any other spelling (live bug 2026-11-11:
+    querypilot was listed twice as a URL and as a URL + .git)."""
+    r = auth_client.post("/api/repos", json={"full_name": "https://github.com/Acme/Widget.git/"})
+    assert r.status_code == 200, r.text
+    assert r.json()["full_name"] == "acme/widget"
+    assert r.json()["clone_url"] == "https://github.com/acme/widget.git"
+    for spelling in ("acme/widget", "ACME/WIDGET", "github.com/acme/widget",
+                     "https://github.com/acme/widget"):
+        assert auth_client.post("/api/repos", json={"full_name": spelling}).status_code == 400
+    assert auth_client.post("/api/repos", json={"full_name": "not-a-repo"}).status_code == 400
+    assert auth_client.post("/api/repos", json={"full_name": "a/b/c"}).status_code == 400
+    names = [x["full_name"] for x in auth_client.get("/api/repos").json()]
+    assert names.count("acme/widget") == 1
+
+
+def test_repo_list_collapses_legacy_duplicates(auth_client):
+    """Rows stored before normalization existed (raw URLs in the DB) are
+    shown once in the list, under the canonical name."""
+    from database.session import SessionLocal
+    from database.models import Repository
+    me = auth_client.get("/api/auth/me").json()
+    db = SessionLocal()
+    try:
+        for raw in ("https://github.com/legacy/dup", "https://github.com/legacy/dup.git"):
+            if not db.query(Repository).filter_by(full_name=raw).first():
+                db.add(Repository(full_name=raw, name="dup", owner_id=me["id"]))
+        db.commit()
+    finally:
+        db.close()
+    names = [x["full_name"] for x in auth_client.get("/api/repos").json()]
+    assert names.count("legacy/dup") == 1
+
+
+def test_reindex_fetches_real_repo_files(auth_client, monkeypatch):
+    """Re-index of a non-demo repo fetches files from GitHub (mocked here)
+    instead of silently indexing zero files (live bug 2026-11-11:
+    'Re-indexed: 0 symbols' for Gautam825406/codesentry)."""
+    import apps.api.main as main
+    fixture_files = {"pkg/mod.py": "def hello():\n    return 'hi'\n",
+                     "pkg/util.js": "function util() { return 1; }\n"}
+    monkeypatch.setattr(main, "fetch_repo_files",
+                        lambda full_name, ref=None: (dict(fixture_files), "f" * 40))
+    r = auth_client.post("/api/repos", json={"full_name": "real/repo"})
+    assert r.status_code == 200, r.text
+    rid = r.json()["id"]
+    res = auth_client.post(f"/api/repos/{rid}/reindex", json={})
+    assert res.status_code == 200, res.text
+    assert res.json()["files_fetched"] == 2
+    assert res.json()["symbols"] == 2
+    repo = auth_client.get(f"/api/repos/{rid}").json()
+    assert repo["index_status"] == "indexed" and repo["symbols"] == 2
+    assert repo["head_sha"] == "f" * 40
+
+
+def test_reindex_fetch_failure_is_honest_502(auth_client, monkeypatch):
+    """If GitHub cannot be reached, re-index fails loudly (502) and the
+    repo is marked failed — never 'indexed' with 0 symbols."""
+    import apps.api.main as main
+    from integrations.github import RepoFetchError
+    monkeypatch.setattr(main, "fetch_repo_files",
+                        lambda full_name, ref=None: (_ for _ in ()).throw(
+                            RepoFetchError("Repository real/gone not found or not accessible")))
+    r = auth_client.post("/api/repos", json={"full_name": "real/gone"})
+    rid = r.json()["id"]
+    res = auth_client.post(f"/api/repos/{rid}/reindex", json={})
+    assert res.status_code == 502, res.text
+    assert "not found or not accessible" in res.text
+    repo = auth_client.get(f"/api/repos/{rid}").json()
+    assert repo["index_status"] == "failed" and repo["symbols"] == 0
+
+
+def test_demo_reindex_without_body_still_indexes(auth_client):
+    """Regression: re-indexing the demo repo with an empty body must still
+    index the bundled demo files (7 symbols), not 0."""
+    data = test_demo_seed_end_to_end(auth_client)
+    rid = data["repo_id"]
+    res = auth_client.post(f"/api/repos/{rid}/reindex", json={})
+    assert res.status_code == 200, res.text
+    assert res.json()["files_fetched"] == 5
+    repo = auth_client.get(f"/api/repos/{rid}").json()
+    assert repo["index_status"] == "indexed" and repo["symbols"] == 7
+
+
 def test_clean_pr_passes_gate(auth_client):
     r = auth_client.post("/api/demo/seed")
     repo_id = r.json()["repo_id"]
