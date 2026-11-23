@@ -77,7 +77,7 @@ export function Repos({ notify, go }: { notify: (m: string) => void; go: (page: 
           <input id="connect-repo" className={inputCls} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="owner/repo — e.g. demo/shop-api" />
           <Btn type="submit" disabled={!fullName.trim()} className="shrink-0">Connect</Btn>
         </form>
-        <p className="mt-2 text-xs text-slate-500">Connecting records the repository and its settings. Indexing clones/fetches contents via the GitHub App when configured; the demo repo ships its files locally.</p>
+        <p className="mt-2 text-xs text-[#98a2b3]">Connecting records the repository and its settings. Indexing clones/fetches contents via the GitHub App when configured; the demo repo ships its files locally.</p>
       </Card>
       <div className="max-w-md">
         <SearchInput value={query} onChange={setQuery} placeholder="Search repositories…" />
@@ -90,11 +90,11 @@ export function Repos({ notify, go }: { notify: (m: string) => void; go: (page: 
           empty="No repositories match your search."
           renderCell={(row, col) => {
             if (col.key === "full_name") return (
-              <button type="button" onClick={() => go("repo", row.id)} className="font-mono font-semibold text-white hover:text-violet-300">
+              <button type="button" onClick={() => go("repo", row.id)} className="font-mono font-semibold text-[#101828] hover:text-[#175cd3]">
                 {row.full_name}{row.is_demo ? " " : ""}{row.is_demo && <Badge tone="cyan">demo</Badge>}
               </button>
             );
-            if (col.key === "languages") return <span className="text-slate-400">{row.languages?.join(", ") || "—"}</span>;
+            if (col.key === "languages") return <span className="text-[#667085]">{row.languages?.join(", ") || "—"}</span>;
             if (col.key === "index_status") return <Badge tone={row.index_status === "indexed" ? "emerald" : "slate"}>{row.index_status}</Badge>;
             if (col.key === "symbols") return <span>{row.symbols ?? 0}</span>;
             if (col.key === "actions") return (
@@ -196,7 +196,7 @@ export function RepoDetail({ repoId, notify, go }: { repoId: number; notify: (m:
 
       {settings && (
         <Card>
-          <div className="mb-4 font-semibold text-white">Repository settings</div>
+          <div className="mb-4 font-semibold text-[#101828]">Repository settings</div>
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Confidence threshold (0–1)">
               <input type="number" step="0.05" min="0" max="1" className={inputCls} value={settings.confidence_threshold}
@@ -227,31 +227,31 @@ export function RepoDetail({ repoId, notify, go }: { repoId: number; notify: (m:
               <Switch checked={!!settings.index_paused} onChange={(v) => setSettings({ ...settings, index_paused: v })} label="Pause indexing" />
             </div>
           </div>
-          <p className="mt-3 text-xs text-slate-500">Training opt-in is OFF by default — feedback is only used for fine-tuning with explicit consent.</p>
+          <p className="mt-3 text-xs text-[#98a2b3]">Training opt-in is OFF by default — feedback is only used for fine-tuning with explicit consent.</p>
           <div className="mt-4"><Btn onClick={save}>Save settings</Btn></div>
         </Card>
       )}
 
       <section aria-labelledby="repo-prs">
-        <h2 id="repo-prs" className="mb-3 text-lg font-bold text-white">Pull requests</h2>
+        <h2 id="repo-prs" className="mb-3 text-lg font-bold text-[#101828]">Pull requests</h2>
         <DataTable
           columns={prColumns} rows={sortedPrs} sortKey={sortKey} sortDir={sortDir} onSort={onSort}
           empty="No pull requests reviewed yet for this repository."
           renderCell={(row, col) => {
             if (col.key === "number") return (
-              <button type="button" onClick={() => go("review", { repoId, number: row.number })} className="font-semibold text-white hover:text-violet-300">
+              <button type="button" onClick={() => go("review", { repoId, number: row.number })} className="font-semibold text-[#101828] hover:text-[#175cd3]">
                 #{row.number}
               </button>
             );
             if (col.key === "title") return (
-              <button type="button" onClick={() => go("review", { repoId, number: row.number })} className="text-left text-white hover:text-violet-300">
+              <button type="button" onClick={() => go("review", { repoId, number: row.number })} className="text-left text-[#101828] hover:text-[#175cd3]">
                 {row.title}
               </button>
             );
             if (col.key === "gate") return row.run?.gate_result
               ? <Badge tone={row.run.gate_result === "fail" ? "red" : "emerald"}>gate: {row.run.gate_result}</Badge>
               : <Badge tone="slate">—</Badge>;
-            if (col.key === "status") return <span className="text-slate-300">{row.run?.status || "not reviewed"}</span>;
+            if (col.key === "status") return <span className="text-[#344054]">{row.run?.status || "not reviewed"}</span>;
             return String(row[col.key] ?? "—");
           }}
         />

@@ -33,9 +33,9 @@ export function FindingCard({ f, notify, onDone }: { f: Finding; notify: (m: str
             {f.cwe_id && <Badge tone="violet">{f.cwe_id}{f.cwe_title ? ` — ${f.cwe_title}` : ""}</Badge>}
             {f.owasp_ref && <Badge tone="cyan">{f.owasp_ref}</Badge>}
           </div>
-          <div className="mt-2 font-semibold text-white">{f.title}</div>
-          <div className="mt-1 text-sm text-slate-400">{f.description}</div>
-          <div className="mt-2 flex flex-wrap items-center gap-2 font-mono text-xs text-slate-400">
+          <div className="mt-2 font-semibold text-[#101828]">{f.title}</div>
+          <div className="mt-1 text-sm text-[#667085]">{f.description}</div>
+          <div className="mt-2 flex flex-wrap items-center gap-2 font-mono text-xs text-[#667085]">
             <span>{location} · PR #{f.pr_number} · confidence {f.confidence.toFixed(2)} · {f.model_version}</span>
             <CopyButton text={location} label="Copy location" />
           </div>
@@ -44,16 +44,16 @@ export function FindingCard({ f, notify, onDone }: { f: Finding; notify: (m: str
           {f.state}{f.suppressed_reason ? ` — ${f.suppressed_reason}` : ""}
         </Badge>
       </div>
-      <pre className="mt-3 overflow-x-auto rounded-lg bg-[#070b16] p-3 text-xs text-slate-200 scrollbar-thin">{f.evidence}</pre>
+      <pre className="mt-3 overflow-x-auto rounded-lg bg-[#f2f3f5] p-3 text-xs text-[#344054] scrollbar-thin">{f.evidence}</pre>
       {f.patch && (
         <div className="mt-3">
-          <div className="text-xs font-semibold text-slate-300">Suggested patch {f.patch_valid ? "(validated — parses)" : "(not validated)"}</div>
+          <div className="text-xs font-semibold text-[#344054]">Suggested patch {f.patch_valid ? "(validated — parses)" : "(not validated)"}</div>
           <pre className="mt-1 overflow-x-auto rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-200 scrollbar-thin">{f.patch}</pre>
         </div>
       )}
       {f.state === "posted" && (
         <div className="mt-4">
-          <button type="button" className="text-xs text-slate-400 underline hover:text-white" onClick={() => setOpen(!open)}>
+          <button type="button" className="text-xs text-[#667085] underline hover:text-[#101828]" onClick={() => setOpen(!open)}>
             {open ? "Hide feedback" : "Give feedback…"}
           </button>
           {open && (
@@ -141,7 +141,7 @@ export function Findings({ notify, initialQuery }: { notify: (m: string) => void
         <EmptyState title="No findings match" body="Try widening the filters — or run the demo review to generate real findings on the sample repository." />
       ) : (
         <>
-          <p className="text-sm text-slate-400" aria-live="polite">
+          <p className="text-sm text-[#667085]" aria-live="polite">
             {visible.length} finding{visible.length === 1 ? "" : "s"} — showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, visible.length)}
           </p>
           <div className="space-y-4">{pageItems.map((x) => <FindingCard key={x.id} f={x} notify={notify} onDone={load} />)}</div>
@@ -214,18 +214,18 @@ export function PRs({ repoId, notify, go }: { repoId?: number; notify: (m: strin
           columns={columns} rows={sorted} sortKey={sortKey} sortDir={sortDir} onSort={onSort}
           empty="No pull requests yet."
           renderCell={(row, col) => {
-            if (col.key === "repo") return <span className="font-mono text-xs text-slate-400">{row.repo.full_name}</span>;
+            if (col.key === "repo") return <span className="font-mono text-xs text-[#667085]">{row.repo.full_name}</span>;
             if (col.key === "number") return (
-              <button type="button" onClick={() => go("review", { repoId: row.repo.id, number: row.number })} className="font-semibold text-white hover:text-violet-300">
+              <button type="button" onClick={() => go("review", { repoId: row.repo.id, number: row.number })} className="font-semibold text-[#101828] hover:text-[#175cd3]">
                 #{row.number}
               </button>
             );
             if (col.key === "title") return (
-              <button type="button" onClick={() => go("review", { repoId: row.repo.id, number: row.number })} className="text-left text-white hover:text-violet-300">
+              <button type="button" onClick={() => go("review", { repoId: row.repo.id, number: row.number })} className="text-left text-[#101828] hover:text-[#175cd3]">
                 {row.title}
               </button>
             );
-            if (col.key === "status") return <span className="text-slate-300">{row.run ? row.run.status : "not reviewed"}</span>;
+            if (col.key === "status") return <span className="text-[#344054]">{row.run ? row.run.status : "not reviewed"}</span>;
             if (col.key === "gate") return row.run?.gate_result
               ? <Badge tone={row.run.gate_result === "fail" ? "red" : "emerald"}>gate: {row.run.gate_result}</Badge>
               : <Badge tone="slate">—</Badge>;
@@ -278,20 +278,20 @@ export function ReviewDetail({ repoId, number, notify }: { repoId: number; numbe
             <Stat label="Model" value={run.model_version} sub={run.prompt_version} />
           </div>
           <Card>
-            <div className="mb-2 font-semibold text-white">Summary</div>
-            <p className="text-sm text-slate-300">{run.summary || "No summary recorded for this run."}</p>
-            {run.adapter_version && <p className="mt-2 text-xs text-slate-500">Adapter: {run.adapter_version}</p>}
+            <div className="mb-2 font-semibold text-[#101828]">Summary</div>
+            <p className="text-sm text-[#344054]">{run.summary || "No summary recorded for this run."}</p>
+            {run.adapter_version && <p className="mt-2 text-xs text-[#98a2b3]">Adapter: {run.adapter_version}</p>}
           </Card>
           {(run.coverage?.files_skipped?.length ?? 0) > 0 && (
             <Alert tone="warning">
               Skipped files (disclosed, never silent): {run.coverage.files_skipped.map((s: any) => `${s.path} (${s.reason})`).join(", ")}
             </Alert>
           )}
-          <h2 className="text-lg font-bold text-white">Findings posted ({posted.length})</h2>
+          <h2 className="text-lg font-bold text-[#101828]">Findings posted ({posted.length})</h2>
           {posted.length === 0 ? <EmptyState title="No findings posted" body="Either the PR is clean, or every candidate finding was suppressed — see below for why." /> : posted.map((f: any) => <FindingCard key={f.id} f={f} notify={notify} onDone={load} />)}
           {suppressed.length > 0 && (
             <>
-              <h2 className="text-lg font-bold text-white">Suppressed findings ({suppressed.length}) — and why</h2>
+              <h2 className="text-lg font-bold text-[#101828]">Suppressed findings ({suppressed.length}) — and why</h2>
               {suppressed.map((f: any) => <FindingCard key={f.id} f={f} notify={notify} />)}
             </>
           )}

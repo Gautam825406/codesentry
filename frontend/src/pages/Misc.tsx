@@ -33,12 +33,12 @@ export function SecurityCenter({ notify }: { notify: (m: string) => void }) {
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <div className="mb-3 font-semibold text-white">Findings by CWE</div>
-          {objEntries(data.by_cwe).length === 0 ? <p className="text-sm text-slate-400">No CWE findings yet.</p> : <BarChart data={objEntries(data.by_cwe)} />}
+          <div className="mb-3 font-semibold text-[#101828]">Findings by CWE</div>
+          {objEntries(data.by_cwe).length === 0 ? <p className="text-sm text-[#667085]">No CWE findings yet.</p> : <BarChart data={objEntries(data.by_cwe)} />}
         </Card>
         <Card>
-          <div className="mb-2 font-semibold text-white">How this is counted</div>
-          <p className="text-sm text-slate-400">Only findings with a valid CWE identifier appear here. A security finding without a valid CWE is never posted as one — that is a filter rule, not a display choice. Absence of findings is not proof of safety.</p>
+          <div className="mb-2 font-semibold text-[#101828]">How this is counted</div>
+          <p className="text-sm text-[#667085]">Only findings with a valid CWE identifier appear here. A security finding without a valid CWE is never posted as one — that is a filter rule, not a display choice. Absence of findings is not proof of safety.</p>
         </Card>
       </div>
       {data.findings.length === 0 ? <EmptyState title="No security findings posted" body="Run the demo review to see a CWE-89 SQL injection finding here." /> :
@@ -58,7 +58,7 @@ export function Quality({ repoId, notify }: { repoId?: number; notify: (m: strin
   // Hooks must stay above the early return (React error #310 otherwise).
   const verdictData = useMemo(() => {
     const entries = objEntries(q?.verdicts);
-    return entries.map((d) => ({ ...d, color: d.label === "reject_wrong" ? "#ef4444" : d.label === "accept" || d.label === "fixed" ? "#10b981" : "#64748b" }));
+    return entries.map((d) => ({ ...d, color: d.label === "reject_wrong" ? "#b42318" : d.label === "accept" || d.label === "fixed" ? "#067647" : "#64748b" }));
   }, [q]);
   if (repos.length === 0) return <EmptyState title="No repositories yet" body="Connect a repository or run the demo review first." />;
   return (
@@ -67,7 +67,7 @@ export function Quality({ repoId, notify }: { repoId?: number; notify: (m: strin
         title="Quality Analytics"
         subtitle="Precision, latency and cost — computed from persisted findings, feedback and runs. Nothing is fabricated."
         actions={
-          <label className="flex items-center gap-2 text-sm text-slate-300">
+          <label className="flex items-center gap-2 text-sm text-[#344054]">
             Repository
             <select className={selectCls} style={{ width: 280 }} value={sel} onChange={(e) => { setSel(parseInt(e.target.value)); setQ(null); }}>
               {repos.map((r: any) => <option key={r.id} value={r.id}>{r.full_name}</option>)}
@@ -85,26 +85,26 @@ export function Quality({ repoId, notify }: { repoId?: number; notify: (m: strin
             <Stat label="False-positive rate" value={q.false_positive_rate === null ? "—" : q.false_positive_rate.toFixed(2)} sub={`p50 latency ${q.review_latency_ms_p50 ?? "—"} ms`} />
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            <Card><div className="mb-3 font-semibold text-white">By severity</div><BarChart data={objEntries(q.by_severity)} /></Card>
-            <Card><div className="mb-3 font-semibold text-white">By CWE</div><BarChart data={objEntries(q.by_cwe)} /></Card>
-            <Card><div className="mb-3 font-semibold text-white">By agent</div><BarChart data={objEntries(q.by_agent)} /></Card>
+            <Card><div className="mb-3 font-semibold text-[#101828]">By severity</div><BarChart data={objEntries(q.by_severity)} /></Card>
+            <Card><div className="mb-3 font-semibold text-[#101828]">By CWE</div><BarChart data={objEntries(q.by_cwe)} /></Card>
+            <Card><div className="mb-3 font-semibold text-[#101828]">By agent</div><BarChart data={objEntries(q.by_agent)} /></Card>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
             <Card>
-              <div className="mb-3 font-semibold text-white">Feedback verdicts</div>
+              <div className="mb-3 font-semibold text-[#101828]">Feedback verdicts</div>
               {verdictData.length === 0
-                ? <p className="text-sm text-slate-400">No feedback yet. Mark findings right or wrong from the Findings page — that is what drives precision and the fine-tuning dataset.</p>
+                ? <p className="text-sm text-[#667085]">No feedback yet. Mark findings right or wrong from the Findings page — that is what drives precision and the fine-tuning dataset.</p>
                 : <DonutChart data={verdictData} />}
             </Card>
             <Card>
-              <div className="mb-3 font-semibold text-white">Cost &amp; latency</div>
+              <div className="mb-3 font-semibold text-[#101828]">Cost &amp; latency</div>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-slate-400">Cost per PR</span><span className="font-medium text-white">${q.cost_per_pr_usd}</span></div>
-                <div className="flex justify-between"><span className="text-slate-400">Review latency p50</span><span className="font-medium text-white">{q.review_latency_ms_p50 ?? "—"} ms</span></div>
-                <div className="flex justify-between"><span className="text-slate-400">Review latency p95</span><span className="font-medium text-white">{q.review_latency_ms_p95 ?? "—"} ms</span></div>
-                <div className="flex justify-between"><span className="text-slate-400">Feedback events</span><span className="font-medium text-white">{q.feedback_total}</span></div>
+                <div className="flex justify-between"><span className="text-[#667085]">Cost per PR</span><span className="font-medium text-[#101828]">${q.cost_per_pr_usd}</span></div>
+                <div className="flex justify-between"><span className="text-[#667085]">Review latency p50</span><span className="font-medium text-[#101828]">{q.review_latency_ms_p50 ?? "—"} ms</span></div>
+                <div className="flex justify-between"><span className="text-[#667085]">Review latency p95</span><span className="font-medium text-[#101828]">{q.review_latency_ms_p95 ?? "—"} ms</span></div>
+                <div className="flex justify-between"><span className="text-[#667085]">Feedback events</span><span className="font-medium text-[#101828]">{q.feedback_total}</span></div>
               </div>
-              <p className="mt-3 text-xs text-slate-500">Only p50/p95 latency is stored per repository, so no latency series is charted — a line would need per-run values the API does not return.</p>
+              <p className="mt-3 text-xs text-[#98a2b3]">Only p50/p95 latency is stored per repository, so no latency series is charted — a line would need per-run values the API does not return.</p>
             </Card>
           </div>
         </>
@@ -130,27 +130,27 @@ export function Agents({ notify }: { notify: (m: string) => void }) {
       <PageHeader title="AI Agents" subtitle="The three review agents and the pipeline they run in." />
       <Card>
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-          <span className="text-slate-400">LangGraph graph: <span className="text-slate-200">{data.graph}</span></span>
-          <span className="text-slate-400">Parser: <code className="text-slate-200">{data.parser}</code></span>
-          <span className="text-slate-400">Embeddings: <code className="text-slate-200">{data.embeddings}</code></span>
-          <span className="text-slate-400">LLM provider: <code className="text-slate-200">{data.llm_provider}</code></span>
+          <span className="text-[#667085]">LangGraph graph: <span className="text-[#344054]">{data.graph}</span></span>
+          <span className="text-[#667085]">Parser: <code className="text-[#344054]">{data.parser}</code></span>
+          <span className="text-[#667085]">Embeddings: <code className="text-[#344054]">{data.embeddings}</code></span>
+          <span className="text-[#667085]">LLM provider: <code className="text-[#344054]">{data.llm_provider}</code></span>
         </div>
       </Card>
       <div className="grid gap-4 md:grid-cols-3">
         {data.agents.map((a: any) => (
           <Card key={a.name}>
             <div className="flex items-center justify-between">
-              <span className="font-semibold capitalize text-white">{a.name} agent</span>
+              <span className="font-semibold capitalize text-[#101828]">{a.name} agent</span>
               <Badge tone="emerald">{a.status}</Badge>
             </div>
-            <p className="mt-2 text-sm text-slate-400">{a.mandate}</p>
-            <p className="mt-2 text-xs text-slate-500">Model: {a.model}</p>
+            <p className="mt-2 text-sm text-[#667085]">{a.mandate}</p>
+            <p className="mt-2 text-xs text-[#98a2b3]">Model: {a.model}</p>
           </Card>
         ))}
       </div>
       <Card>
-        <div className="font-semibold text-white">How a review runs</div>
-        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-400">
+        <div className="font-semibold text-[#101828]">How a review runs</div>
+        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-[#667085]">
           <li>Changed symbols are retrieved graph-first: the symbol, its callers, its callees, its tests, then vector-similar code — inside a per-symbol token budget.</li>
           <li>Three agents review the same context pack with different mandates and return Pydantic-validated findings.</li>
           <li>The filter drops uncited, low-confidence, duplicate, previously-rejected and CWE-less security findings. Suppressed findings are logged with a reason.</li>
@@ -191,24 +191,24 @@ export function FineTuning({ notify }: { notify: (m: string) => void }) {
         Promotion is blocked unless the held-out evaluation gate passes. No training run is claimed unless a real job completed — this environment has no GPU, so training stays honestly <code>not_started</code> until run on a GPU host.
       </Alert>
       <section aria-labelledby="ft-datasets">
-        <h2 id="ft-datasets" className="mb-3 text-lg font-bold text-white">Dataset versions</h2>
+        <h2 id="ft-datasets" className="mb-3 text-lg font-bold text-[#101828]">Dataset versions</h2>
         <DataTable
           columns={datasetColumns} rows={datasets}
           empty="No datasets yet. Give feedback on findings first, with training opt-in enabled on the repository."
           renderCell={(row, col) => {
-            if (col.key === "version") return <span className="font-mono font-medium text-white">{row.version}</span>;
+            if (col.key === "version") return <span className="font-mono font-medium text-[#101828]">{row.version}</span>;
             if (col.key === "actions") return <Btn variant="outline" onClick={() => train(row.id)}>Start LoRA training</Btn>;
             return String(row[col.key] ?? "—");
           }}
         />
       </section>
       <section aria-labelledby="ft-adapters">
-        <h2 id="ft-adapters" className="mb-3 text-lg font-bold text-white">LoRA adapters</h2>
+        <h2 id="ft-adapters" className="mb-3 text-lg font-bold text-[#101828]">LoRA adapters</h2>
         <DataTable
           columns={adapterColumns} rows={adapters}
           empty="No adapters yet."
           renderCell={(row, col) => {
-            if (col.key === "version") return <span className="font-mono font-medium text-white">{row.version}</span>;
+            if (col.key === "version") return <span className="font-mono font-medium text-[#101828]">{row.version}</span>;
             if (col.key === "promoted") return row.promoted ? <Badge tone="emerald">promoted</Badge> : <Badge tone="slate">not promoted</Badge>;
             if (col.key === "status") return <Badge tone={row.status === "ready" ? "emerald" : "slate"}>{row.status}</Badge>;
             if (col.key === "actions") return (
@@ -271,14 +271,14 @@ export function AuditLogs() {
         <EmptyState title="No audit events yet" body="Installs, settings changes, dismissals, purges and adapter promotions are recorded here." />
       ) : (
         <>
-          <p className="text-sm text-slate-400" aria-live="polite">{filtered.length} event{filtered.length === 1 ? "" : "s"}</p>
+          <p className="text-sm text-[#667085]" aria-live="polite">{filtered.length} event{filtered.length === 1 ? "" : "s"}</p>
           <DataTable
             columns={columns} rows={pageRows}
             empty="No audit events match your filter."
             renderCell={(row, col) => {
-              if (col.key === "action") return <span className="font-semibold text-white">{row.action}</span>;
+              if (col.key === "action") return <span className="font-semibold text-[#101828]">{row.action}</span>;
               if (col.key === "repo_id") return <span>{row.repo_id ?? "—"}</span>;
-              if (col.key === "created_at") return <span className="font-mono text-xs text-slate-500">{row.created_at ?? "—"}</span>;
+              if (col.key === "created_at") return <span className="font-mono text-xs text-[#98a2b3]">{row.created_at ?? "—"}</span>;
               return String(row[col.key] ?? "—");
             }}
           />
@@ -304,8 +304,8 @@ export function SettingsPage({ notify, go }: { notify: (m: string) => void; go: 
           <div className="flex items-center gap-4">
             <Avatar name={me.name || me.email || "?"} className="h-12 w-12 text-base" />
             <div>
-              <div className="font-semibold text-white">{me.name || "—"}</div>
-              <div className="text-sm text-slate-400">{me.email}</div>
+              <div className="font-semibold text-[#101828]">{me.name || "—"}</div>
+              <div className="text-sm text-[#667085]">{me.email}</div>
               <div className="mt-1 flex flex-wrap gap-2">
                 <Badge tone="violet">{me.role}</Badge>
                 {me.github_login && <Badge tone="slate">GitHub: {me.github_login}</Badge>}
@@ -315,8 +315,8 @@ export function SettingsPage({ notify, go }: { notify: (m: string) => void; go: 
         </Card>
       )}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-white">Repository settings</h2>
-        <label className="flex items-center gap-2 text-sm text-slate-300">
+        <h2 className="text-lg font-bold text-[#101828]">Repository settings</h2>
+        <label className="flex items-center gap-2 text-sm text-[#344054]">
           Repository
           <select className={selectCls} style={{ width: 280 }} value={sel} onChange={(e) => setSel(parseInt(e.target.value))}>
             {repos.map((r: any) => <option key={r.id} value={r.id}>{r.full_name}</option>)}
@@ -347,12 +347,12 @@ export function Documentation() {
         onChange={setTab}
       />
       {tab === "overview" && (
-        <Card><div className="font-semibold text-white">What CodeSentry does</div>
-          <p className="mt-2 text-sm text-slate-400">CodeSentry indexes repositories by structure (tree-sitter symbols + call graph), reviews PR diffs with three LangGraph agents, and posts only evidence-cited, confidence-filtered findings with CWE mapping and validated patches. High-severity findings block the CI check until fixed or dismissed by an authorised reviewer.</p></Card>
+        <Card><div className="font-semibold text-[#101828]">What CodeSentry does</div>
+          <p className="mt-2 text-sm text-[#667085]">CodeSentry indexes repositories by structure (tree-sitter symbols + call graph), reviews PR diffs with three LangGraph agents, and posts only evidence-cited, confidence-filtered findings with CWE mapping and validated patches. High-severity findings block the CI check until fixed or dismissed by an authorised reviewer.</p></Card>
       )}
       {tab === "demo" && (
-        <Card><div className="font-semibold text-white">Demo in 60 seconds</div>
-          <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-400">
+        <Card><div className="font-semibold text-[#101828]">Demo in 60 seconds</div>
+          <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-[#667085]">
             <li>Sign in, or click “Run demo review” on the login page.</li>
             <li>Open Repositories → demo/shop-api → PR #42.</li>
             <li>Read the CWE-89 SQL injection: the sink is in <code>app/db.py</code>, the tainted input in <code>app/orders.py</code> — the finding exists only because the call graph was retrieved.</li>
@@ -360,8 +360,8 @@ export function Documentation() {
           </ol></Card>
       )}
       {tab === "api" && (
-        <Card><div className="font-semibold text-white">API (selected)</div>
-          <pre className="mt-2 overflow-x-auto rounded-lg bg-[#070b16] p-3 text-xs text-slate-300 scrollbar-thin">{`POST /webhooks/github            GitHub events (HMAC verified, deduped)
+        <Card><div className="font-semibold text-[#101828]">API (selected)</div>
+          <pre className="mt-2 overflow-x-auto rounded-lg bg-[#f2f3f5] p-3 text-xs text-[#344054] scrollbar-thin">{`POST /webhooks/github            GitHub events (HMAC verified, deduped)
 GET  /api/repos                   List visible repositories
 GET  /api/repos/{id}/settings     PATCH to update (admin only)
 POST /api/repos/{id}/reindex      Full re-index (admin)
@@ -371,17 +371,17 @@ GET  /api/repos/{id}/quality      Metrics from persisted data only
 POST /api/repos/{id}/purge?confirm=true
 GET  /health  ·  GET /metrics`}</pre>
           <div className="mt-4">
-            <div className="mb-2 text-xs font-semibold text-slate-300">Example: list repositories</div>
+            <div className="mb-2 text-xs font-semibold text-[#344054]">Example: list repositories</div>
             <div className="flex items-start justify-between gap-3">
-              <pre className="flex-1 overflow-x-auto rounded-lg bg-[#070b16] p-3 text-xs text-slate-300 scrollbar-thin">{API_SNIPPET}</pre>
+              <pre className="flex-1 overflow-x-auto rounded-lg bg-[#f2f3f5] p-3 text-xs text-[#344054] scrollbar-thin">{API_SNIPPET}</pre>
               <CopyButton text={API_SNIPPET} label="Copy" />
             </div>
           </div>
         </Card>
       )}
       {tab === "limits" && (
-        <Card><div className="font-semibold text-white">What it will not do</div>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-400">
+        <Card><div className="font-semibold text-[#101828]">What it will not do</div>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#667085]">
             <li>No auto-merge, no auto-apply of patches. Humans decide.</li>
             <li>No claim of complete security coverage — absence of findings is not proof of safety.</li>
             <li>Taint analysis in v1 is heuristic hints, not a verified data-flow proof.</li>

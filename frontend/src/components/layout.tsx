@@ -6,8 +6,8 @@ export const HONEST_LINE = "No auto-merge. No complete-security-coverage claim. 
 function Logo({ onClick }: { onClick?: () => void }) {
   const inner = (
     <>
-      <span aria-hidden="true" className="text-lg leading-none">🛡️</span>
-      <span className="text-lg font-bold text-white">Code<span className="grad-text">Sentry</span></span>
+      <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-md bg-[#182230] text-xs font-bold text-[#101828]">CS</span>
+      <span className="text-lg font-bold text-[#101828]">Code<span className="grad-text">Sentry</span></span>
     </>
   );
   return onClick ? (
@@ -25,9 +25,9 @@ export type ToastKind = "success" | "error" | "info";
 export type ToastItem = { id: number; message: string; kind: ToastKind };
 
 const TOAST_STYLES: Record<ToastKind, string> = {
-  success: "border-emerald-500/40 bg-slate-900",
-  error: "border-red-500/40 bg-slate-900",
-  info: "border-slate-700 bg-slate-900",
+  success: "border-[#a6f4c5] bg-white",
+  error: "border-[#fecdca] bg-white",
+  info: "border-[#d0d5dd] bg-white",
 };
 
 export function Toasts({ items }: { items: ToastItem[] }) {
@@ -35,7 +35,7 @@ export function Toasts({ items }: { items: ToastItem[] }) {
   return (
     <div className="fixed bottom-4 right-4 z-[60] flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2" aria-live="polite">
       {items.map((t) => (
-        <div key={t.id} role="status" className={`rounded-lg border px-4 py-3 text-sm text-white shadow-xl ${TOAST_STYLES[t.kind]}`}>
+        <div key={t.id} role="status" className={`rounded-lg border px-4 py-3 text-sm text-[#101828] shadow-xl ${TOAST_STYLES[t.kind]}`}>
           {t.message}
         </div>
       ))}
@@ -52,21 +52,21 @@ export type PublicAnchor = "features" | "how" | "faq";
 
 export function PublicShell({ children, onNavigate }: { children: ReactNode; onNavigate: (view: PublicView, anchor?: PublicAnchor) => void }) {
   const anchorLink = (label: string, anchor: PublicAnchor) => (
-    <button key={label} type="button" onClick={() => onNavigate("landing", anchor)} className="block py-1 text-sm text-slate-400 hover:text-white">{label}</button>
+    <button key={label} type="button" onClick={() => onNavigate("landing", anchor)} className="block py-1 text-sm text-[#667085] hover:text-[#101828]">{label}</button>
   );
   const docLink = (label: string) => (
-    <button key={label} type="button" onClick={() => onNavigate("docs")} className="block py-1 text-sm text-slate-400 hover:text-white">{label}</button>
+    <button key={label} type="button" onClick={() => onNavigate("docs")} className="block py-1 text-sm text-[#667085] hover:text-[#101828]">{label}</button>
   );
   return (
-    <div className="flex min-h-screen flex-col bg-[#070b16]">
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-[#070b16]/95">
+    <div className="flex min-h-screen flex-col bg-[#f2f3f5]">
+      <header className="sticky top-0 z-40 border-b border-[#e4e7ec] bg-white/95">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <Logo onClick={() => onNavigate("landing")} />
           <nav aria-label="Product" className="hidden items-center gap-1 md:flex">
             {(["Features", "How it works", "FAQ"] as const).map((label) => (
               <button key={label} type="button"
                 onClick={() => onNavigate("landing", label === "Features" ? "features" : label === "How it works" ? "how" : "faq")}
-                className="rounded-lg px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 hover:text-white">{label}</button>
+                className="rounded-lg px-3 py-1.5 text-sm text-[#667085] hover:bg-[#f2f4f7] hover:text-[#101828]">{label}</button>
             ))}
           </nav>
           <div className="flex items-center gap-2">
@@ -76,14 +76,14 @@ export function PublicShell({ children, onNavigate }: { children: ReactNode; onN
         </div>
       </header>
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">{children}</main>
-      <footer className="border-t border-slate-800">
+      <footer className="border-t border-[#e4e7ec]">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-4 sm:px-6">
           <div>
             <Logo />
-            <p className="mt-3 text-sm text-slate-400">Agentic secure code review — AST-aware, cited findings, CI gating.</p>
+            <p className="mt-3 text-sm text-[#667085]">Agentic secure code review — AST-aware, cited findings, CI gating.</p>
           </div>
           <nav aria-label="Product">
-            <div className="text-sm font-semibold text-white">Product</div>
+            <div className="text-sm font-semibold text-[#101828]">Product</div>
             <div className="mt-2">
               {anchorLink("Features", "features")}
               {anchorLink("How it works", "how")}
@@ -92,17 +92,17 @@ export function PublicShell({ children, onNavigate }: { children: ReactNode; onN
             </div>
           </nav>
           <nav aria-label="Company">
-            <div className="text-sm font-semibold text-white">Company</div>
+            <div className="text-sm font-semibold text-[#101828]">Company</div>
             <div className="mt-2">{["About", "Security"].map(docLink)}</div>
           </nav>
           <nav aria-label="Resources">
-            <div className="text-sm font-semibold text-white">Resources</div>
+            <div className="text-sm font-semibold text-[#101828]">Resources</div>
             <div className="mt-2">{["Documentation", "API reference"].map(docLink)}</div>
-            <button type="button" onClick={() => onNavigate("login")} className="block py-1 text-sm text-slate-400 hover:text-white">Sign in</button>
+            <button type="button" onClick={() => onNavigate("login")} className="block py-1 text-sm text-[#667085] hover:text-[#101828]">Sign in</button>
           </nav>
         </div>
-        <div className="border-t border-slate-800">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs text-slate-500 sm:px-6">
+        <div className="border-t border-[#e4e7ec]">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs text-[#98a2b3] sm:px-6">
             <span>CodeSentry — AST-aware review, cited findings, CI gating, learning from feedback.</span>
             <span>{HONEST_LINE}</span>
           </div>
@@ -190,22 +190,22 @@ export function AppShell({ me, page, go, onSignOut, children }: {
 
   const sidebarContent = (forDrawer: boolean) => (
     <>
-      <div className={`flex items-center border-b border-slate-800 px-4 py-3 ${collapsed && !forDrawer ? "justify-center" : "justify-between"}`}>
+      <div className={`flex items-center border-b border-[#e4e7ec] px-4 py-3 ${collapsed && !forDrawer ? "justify-center" : "justify-between"}`}>
         {collapsed && !forDrawer ? (
-          <span className="text-lg leading-none" aria-hidden="true">🛡️</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#182230] text-xs font-bold text-[#101828]" aria-hidden="true">CS</span>
         ) : (
           <Logo onClick={() => go("overview")} />
         )}
         {forDrawer && (
           <button type="button" onClick={() => setMobileOpen(false)} aria-label="Close navigation"
-            className="rounded-lg px-2 py-1 text-lg leading-none text-slate-400 hover:bg-slate-800 hover:text-white">&times;</button>
+            className="rounded-lg px-2 py-1 text-lg leading-none text-[#667085] hover:bg-[#f2f4f7] hover:text-[#101828]">&times;</button>
         )}
       </div>
       <nav aria-label="Primary" className="scrollbar-thin flex-1 overflow-y-auto px-2 py-3">
         {NAV_SECTIONS.map((section) => (
           <div key={section.label} className="mb-4">
             {(!collapsed || forDrawer) && (
-              <div className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">{section.label}</div>
+              <div className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-[#98a2b3]">{section.label}</div>
             )}
             <ul className="space-y-0.5">
               {section.items.map((item) => {
@@ -218,7 +218,7 @@ export function AppShell({ me, page, go, onSignOut, children }: {
                       title={collapsed && !forDrawer ? item.label : undefined}
                       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm ${
                         collapsed && !forDrawer ? "justify-center px-0" : ""
-                      } ${active ? "bg-violet-600/15 font-medium text-violet-200" : "text-slate-400 hover:bg-slate-800/70 hover:text-white"}`}>
+                      } ${active ? "bg-[#e4e7ec] font-medium text-[#182230]" : "text-[#667085] hover:bg-[#f2f4f7] hover:text-[#101828]"}`}>
                       <NavIcon name={item.id} />
                       {(!collapsed || forDrawer) && <span className="truncate">{item.label}</span>}
                     </button>
@@ -229,9 +229,9 @@ export function AppShell({ me, page, go, onSignOut, children }: {
           </div>
         ))}
       </nav>
-      <div className="border-t border-slate-800 p-2">
+      <div className="border-t border-[#e4e7ec] p-2">
         <button type="button" onClick={toggleCollapsed} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className={`hidden w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800/70 hover:text-white lg:flex ${collapsed ? "justify-center px-0" : ""}`}>
+          className={`hidden w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-[#667085] hover:bg-[#f2f4f7] hover:text-[#101828] lg:flex ${collapsed ? "justify-center px-0" : ""}`}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
             className={`h-4 w-4 shrink-0 transition-transform ${collapsed ? "rotate-180" : ""}`} aria-hidden="true">
             <path d="M15 18l-6-6 6-6" />
@@ -243,10 +243,10 @@ export function AppShell({ me, page, go, onSignOut, children }: {
   );
 
   return (
-    <div className="min-h-screen bg-[#070b16] lg:flex">
+    <div className="min-h-screen bg-[#f2f3f5] lg:flex">
       {/* Desktop sidebar */}
       <aside aria-label="Sidebar"
-        className={`sticky top-0 hidden h-screen shrink-0 flex-col border-r border-slate-800 bg-[#0b1226] lg:flex ${collapsed ? "w-[68px]" : "w-64"}`}>
+        className={`sticky top-0 hidden h-screen shrink-0 flex-col border-r border-[#e4e7ec] bg-white lg:flex ${collapsed ? "w-[68px]" : "w-64"}`}>
         {sidebarContent(false)}
       </aside>
 
@@ -254,53 +254,53 @@ export function AppShell({ me, page, go, onSignOut, children }: {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/70" onClick={() => setMobileOpen(false)} aria-hidden="true" />
-          <aside aria-label="Sidebar" className="absolute left-0 top-0 flex h-full w-72 flex-col border-r border-slate-800 bg-[#0b1226]">
+          <aside aria-label="Sidebar" className="absolute left-0 top-0 flex h-full w-72 flex-col border-r border-[#e4e7ec] bg-white">
             {sidebarContent(true)}
           </aside>
         </div>
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-slate-800 bg-[#070b16]/95">
+        <header className="sticky top-0 z-30 border-b border-[#e4e7ec] bg-white/95">
           <div className="flex items-center gap-3 px-4 py-3 sm:px-6">
             <button type="button" onClick={() => setMobileOpen(true)} aria-label="Open navigation"
-              className="rounded-lg p-2 text-slate-300 hover:bg-slate-800 lg:hidden">
+              className="rounded-lg p-2 text-[#344054] hover:bg-[#f2f4f7] lg:hidden">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
                 className="h-5 w-5" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-semibold text-white">{PAGE_TITLES[page] ?? "CodeSentry"}</div>
-              <div className="hidden truncate text-xs text-slate-500 sm:block">CodeSentry</div>
+              <div className="truncate text-sm font-semibold text-[#101828]">{PAGE_TITLES[page] ?? "CodeSentry"}</div>
+              <div className="hidden truncate text-xs text-[#98a2b3] sm:block">CodeSentry</div>
             </div>
             <div className="hidden w-64 md:block lg:w-80">
               <SearchInput value={search} onChange={setSearch} onSubmit={submitSearch} placeholder="Search findings…" />
             </div>
             <Dropdown
               trigger={
-                <button type="button" aria-label="Account menu" className="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-slate-800">
+                <button type="button" aria-label="Account menu" className="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-[#f2f4f7]">
                   <Avatar name={displayName} />
                   <span className="hidden text-left sm:block">
-                    <span className="block max-w-[160px] truncate text-sm font-medium text-white">{displayName}</span>
-                    <span className="block text-xs capitalize text-slate-500">{role}</span>
+                    <span className="block max-w-[160px] truncate text-sm font-medium text-[#101828]">{displayName}</span>
+                    <span className="block text-xs capitalize text-[#98a2b3]">{role}</span>
                   </span>
                 </button>
               }>
-              <div className="border-b border-slate-800 px-3 py-2">
-                <div className="truncate text-sm font-medium text-white">{displayName}</div>
-                <div className="truncate text-xs text-slate-400">{me?.email ?? ""}</div>
-                <div className="mt-0.5 text-xs capitalize text-slate-500">{role}</div>
+              <div className="border-b border-[#e4e7ec] px-3 py-2">
+                <div className="truncate text-sm font-medium text-[#101828]">{displayName}</div>
+                <div className="truncate text-xs text-[#667085]">{me?.email ?? ""}</div>
+                <div className="mt-0.5 text-xs capitalize text-[#98a2b3]">{role}</div>
               </div>
               {[
                 { label: "Settings", onClick: () => go("settings") },
                 { label: "Documentation", onClick: () => go("docs") },
               ].map((item) => (
                 <button key={item.label} type="button" role="menuitem" onClick={item.onClick}
-                  className="block w-full rounded-lg px-3 py-2 text-left text-sm text-slate-300 hover:bg-slate-800 hover:text-white">
+                  className="block w-full rounded-lg px-3 py-2 text-left text-sm text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]">
                   {item.label}
                 </button>
               ))}
               <button type="button" role="menuitem" onClick={onSignOut}
-                className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-300 hover:bg-slate-800">
+                className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-300 hover:bg-[#f2f4f7]">
                 Sign out
               </button>
             </Dropdown>
@@ -312,8 +312,8 @@ export function AppShell({ me, page, go, onSignOut, children }: {
 
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:py-8">{children}</main>
 
-        <footer className="border-t border-slate-800">
-          <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-5 text-xs text-slate-500 sm:px-6">
+        <footer className="border-t border-[#e4e7ec]">
+          <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-5 text-xs text-[#98a2b3] sm:px-6">
             <span>CodeSentry — AST-aware review, cited findings, CI gating, learning from feedback.</span>
             <span>{HONEST_LINE}</span>
           </div>

@@ -46,7 +46,7 @@ function PasswordField({
           onClick={() => setShow((s) => !s)}
           aria-label={show ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
           aria-pressed={show}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-slate-400 hover:bg-slate-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-[#667085] hover:bg-[#f2f4f7] hover:text-[#101828] focus:outline-none focus:ring-2 focus:ring-[#175cd3]/30"
         >
           {show ? "Hide" : "Show"}
         </button>
@@ -63,10 +63,10 @@ function DemoCard({
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="font-semibold text-white">Try the live demo — no GitHub needed</div>
+        <div className="font-semibold text-[#101828]">Try the live demo — no GitHub needed</div>
         <Badge tone="emerald">Live demo</Badge>
       </div>
-      <p className="mt-1 text-sm text-slate-400">
+      <p className="mt-1 text-sm text-[#667085]">
         Seeds the sample shop API, indexes it, and runs a real review of PR #42: a SQL injection
         visible only through the call graph.
       </p>
@@ -143,10 +143,10 @@ export function Login({ onDone, notify, go }: AuthProps) {
   return (
     <PublicShell onNavigate={(v, anchor) => go(v, anchor)}>
       <div className="mx-auto max-w-md pt-8 sm:pt-14">
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-3xl font-bold text-[#101828]">
           Sign in to <span className="grad-text">CodeSentry</span>
         </h1>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-[#667085]">
           Agentic secure code review. No demo data is faked — every number on the dashboard comes
           from real reviews.
         </p>
@@ -172,12 +172,12 @@ export function Login({ onDone, notify, go }: AuthProps) {
             autoComplete="current-password"
           />
           <div className="flex items-center justify-between gap-3">
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-[#344054]">
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-600 bg-[#070b16] accent-violet-600"
+                className="h-4 w-4 rounded border-[#d0d5dd] bg-white accent-[#182230]"
               />
               Remember me
             </label>
@@ -191,7 +191,7 @@ export function Login({ onDone, notify, go }: AuthProps) {
           <button
             type="button"
             onClick={() => { setEmail(DEMO_EMAIL); setPassword(DEMO_PASSWORD); }}
-            className="w-full rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium text-slate-200 hover:border-slate-600 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+            className="w-full rounded-lg border border-[#d0d5dd] px-4 py-2 text-sm font-medium text-[#344054] hover:border-[#d0d5dd] hover:bg-[#f2f4f7] focus:outline-none focus:ring-2 focus:ring-[#175cd3]/30"
           >
             Use demo account — fills {DEMO_EMAIL} / demo1234
           </button>
@@ -201,12 +201,12 @@ export function Login({ onDone, notify, go }: AuthProps) {
           {ghError && <Alert tone="warning">{ghError}</Alert>}
         </div>
 
-        <p className="mt-4 text-center text-sm text-slate-400">
+        <p className="mt-4 text-center text-sm text-[#667085]">
           No account?{" "}
           <button
             type="button"
             onClick={() => go("register")}
-            className="font-medium text-violet-300 hover:text-violet-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 rounded"
+            className="font-medium text-[#175cd3] hover:text-[#182230] focus:outline-none focus:ring-2 focus:ring-[#175cd3]/30 rounded"
           >
             Create one
           </button>
@@ -216,7 +216,7 @@ export function Login({ onDone, notify, go }: AuthProps) {
           <DemoCard busy={demoBusy} onRun={demo} error="" />
         </div>
 
-        <p className="mt-6 text-center text-xs text-slate-500">
+        <p className="mt-6 text-center text-xs text-[#98a2b3]">
           There is no password reset by email — if you forget your password, ask a workspace admin
           to reset it. GitHub sign-in works only when the deployment has GitHub OAuth configured.
         </p>
@@ -258,10 +258,10 @@ export function Register({ onDone, notify, go }: AuthProps) {
   return (
     <PublicShell onNavigate={(v, anchor) => go(v, anchor)}>
       <div className="mx-auto max-w-md pt-8 sm:pt-14">
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-3xl font-bold text-[#101828]">
           Create your <span className="grad-text">CodeSentry</span> account
         </h1>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-[#667085]">
           Review pull requests with cited evidence and a CI gate. No role selection — new accounts
           start as regular users; an admin can promote you later.
         </p>
@@ -304,12 +304,12 @@ export function Register({ onDone, notify, go }: AuthProps) {
             onChange={setConfirm}
             autoComplete="new-password"
           />
-          <label className="flex cursor-pointer items-start gap-2 text-sm text-slate-300">
+          <label className="flex cursor-pointer items-start gap-2 text-sm text-[#344054]">
             <input
               type="checkbox"
               checked={terms}
               onChange={(e) => setTerms(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-600 bg-[#070b16] accent-violet-600"
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-[#d0d5dd] bg-white accent-[#182230]"
             />
             <span>
               I agree to use CodeSentry responsibly — findings are advisory, not proof of safety —
@@ -317,7 +317,7 @@ export function Register({ onDone, notify, go }: AuthProps) {
               <button
                 type="button"
                 onClick={() => go("docs")}
-                className="font-medium text-violet-300 hover:text-violet-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 rounded"
+                className="font-medium text-[#175cd3] hover:text-[#182230] focus:outline-none focus:ring-2 focus:ring-[#175cd3]/30 rounded"
               >
                 Documentation
               </button>
@@ -329,12 +329,12 @@ export function Register({ onDone, notify, go }: AuthProps) {
           </Btn>
         </form>
 
-        <p className="mt-4 text-center text-sm text-slate-400">
+        <p className="mt-4 text-center text-sm text-[#667085]">
           Already have an account?{" "}
           <button
             type="button"
             onClick={() => go("login")}
-            className="font-medium text-violet-300 hover:text-violet-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 rounded"
+            className="font-medium text-[#175cd3] hover:text-[#182230] focus:outline-none focus:ring-2 focus:ring-[#175cd3]/30 rounded"
           >
             Sign in
           </button>

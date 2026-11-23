@@ -7,7 +7,7 @@ import {
 
 const SEV_ORDER = ["critical", "high", "medium", "low"];
 const SEV_COLORS: Record<string, string> = {
-  critical: "#ef4444", high: "#f97316", medium: "#f59e0b", low: "#64748b",
+  critical: "#b42318", high: "#b54708", medium: "#dc6803", low: "#64748b",
 };
 
 function gateBadge(gate?: string | null) {
@@ -126,20 +126,20 @@ export function Overview({ notify, go }: { notify: (m: string) => void; go: (pag
         <>
           <div className="grid gap-4 lg:grid-cols-2">
             <Card>
-              <div className="mb-3 font-semibold text-white">Findings by severity</div>
+              <div className="mb-3 font-semibold text-[#101828]">Findings by severity</div>
               <DonutChart data={sevData} />
             </Card>
             <Card>
-              <div className="mb-3 font-semibold text-white">Findings by agent</div>
+              <div className="mb-3 font-semibold text-[#101828]">Findings by agent</div>
               {agentData.length === 0
-                ? <p className="text-sm text-slate-400">No findings yet.</p>
+                ? <p className="text-sm text-[#667085]">No findings yet.</p>
                 : <BarChart data={agentData} />}
             </Card>
           </div>
 
           <section aria-labelledby="recent-prs">
             <div className="mb-3 flex items-center justify-between">
-              <h2 id="recent-prs" className="text-lg font-bold text-white">Recent pull requests</h2>
+              <h2 id="recent-prs" className="text-lg font-bold text-[#101828]">Recent pull requests</h2>
               <Btn variant="ghost" onClick={() => go("prs")}>View all</Btn>
             </div>
             {prs.length === 0 ? (
@@ -148,14 +148,14 @@ export function Overview({ notify, go }: { notify: (m: string) => void; go: (pag
               <div className="space-y-2">
                 {prs.slice(0, 5).map((p: any) => (
                   <button key={`${p.repo.id}-${p.number}`} onClick={() => go("review", { repoId: p.repo.id, number: p.number })}
-                    className="flex w-full flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-800 bg-[#0b1226] px-4 py-3 text-left hover:bg-slate-800/50">
+                    className="flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-[#e4e7ec] bg-white px-4 py-3 text-left hover:bg-[#f8fafc]">
                     <span className="min-w-0">
-                      <span className="font-mono text-xs text-slate-400">{p.repo.full_name}</span>
-                      <span className="ml-2 font-semibold text-white">#{p.number} {p.title}</span>
-                      <span className="ml-2 text-xs text-slate-400">{p.size_band} · {p.author}</span>
+                      <span className="font-mono text-xs text-[#667085]">{p.repo.full_name}</span>
+                      <span className="ml-2 font-semibold text-[#101828]">#{p.number} {p.title}</span>
+                      <span className="ml-2 text-xs text-[#667085]">{p.size_band} · {p.author}</span>
                     </span>
                     <span className="flex items-center gap-2">{gateBadge(p.run?.gate_result)}
-                      <span className="text-xs text-slate-400">{p.run ? `${p.run.status} · ${p.run.latency_ms} ms` : "not reviewed"}</span></span>
+                      <span className="text-xs text-[#667085]">{p.run ? `${p.run.status} · ${p.run.latency_ms} ms` : "not reviewed"}</span></span>
                   </button>
                 ))}
               </div>
@@ -163,19 +163,19 @@ export function Overview({ notify, go }: { notify: (m: string) => void; go: (pag
           </section>
 
           <section aria-labelledby="repo-table">
-            <h2 id="repo-table" className="mb-3 text-lg font-bold text-white">Repositories</h2>
+            <h2 id="repo-table" className="mb-3 text-lg font-bold text-[#101828]">Repositories</h2>
             <DataTable
               columns={repoColumns} rows={sortedRepos} sortKey={sortKey} sortDir={sortDir} onSort={onSort}
               empty="No repositories yet."
               renderCell={(row, col) => {
                 if (col.key === "full_name") return (
-                  <button type="button" onClick={() => go("repo", row.id)} className="font-mono font-semibold text-white hover:text-violet-300">
+                  <button type="button" onClick={() => go("repo", row.id)} className="font-mono font-semibold text-[#101828] hover:text-[#175cd3]">
                     {row.full_name}{row.is_demo ? " " : ""}{row.is_demo && <Badge tone="cyan">demo</Badge>}
                   </button>
                 );
                 if (col.key === "index_status") return <Badge tone={row.index_status === "indexed" ? "emerald" : "slate"}>{row.index_status}</Badge>;
                 if (col.key === "symbols") return <span>{row.symbols ?? 0}</span>;
-                if (col.key === "languages") return <span className="text-slate-400">{row.languages?.join(", ") || "—"}</span>;
+                if (col.key === "languages") return <span className="text-[#667085]">{row.languages?.join(", ") || "—"}</span>;
                 if (col.key === "actions") return (
                   <span className="flex gap-2">
                     <Btn variant="outline" onClick={() => go("repo", row.id)}>Open</Btn>

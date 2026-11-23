@@ -97,10 +97,10 @@ export function Landing({ go, scrollTo, scrollNonce }: {
       {/* Hero */}
       <section aria-labelledby="hero-heading" className="mx-auto max-w-4xl pt-10 text-center sm:pt-16">
         <Badge tone="violet" className="mb-4">Agentic secure code review</Badge>
-        <h1 id="hero-heading" className="text-4xl font-bold leading-tight text-white sm:text-5xl">
+        <h1 id="hero-heading" className="text-4xl font-bold leading-tight text-[#101828] sm:text-5xl">
           Code review that <span className="grad-text">cites its evidence</span>
         </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-base text-slate-400 sm:text-lg">
+        <p className="mx-auto mt-4 max-w-2xl text-base text-[#667085] sm:text-lg">
           CodeSentry indexes your code as an AST and call graph, reviews pull requests with three
           agents, and posts only confidence-filtered findings — each with its evidence, CWE
           mapping, and a validated patch — behind a CI merge gate.
@@ -109,14 +109,14 @@ export function Landing({ go, scrollTo, scrollNonce }: {
           <Btn onClick={() => go("login")}>Run the live demo</Btn>
           <Btn variant="outline" onClick={() => go("docs")}>See how it works</Btn>
         </div>
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-xs text-[#98a2b3]">
           No GitHub needed for the demo — it seeds a sample shop API and reviews PR #42.
         </p>
       </section>
 
       {/* Product preview — real demo finding */}
       <section aria-labelledby="preview-heading" className="mx-auto mt-14 max-w-4xl">
-        <h2 id="preview-heading" className="text-center text-xl font-bold text-white">
+        <h2 id="preview-heading" className="text-center text-xl font-bold text-[#101828]">
           What a review actually looks like
         </h2>
         <Card className="mt-4">
@@ -128,22 +128,22 @@ export function Landing({ go, scrollTo, scrollNonce }: {
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <SeverityBadge severity="high" />
-                <span className="font-semibold text-white">SQL injection via string-formatted query</span>
+                <span className="font-semibold text-[#101828]">SQL injection via string-formatted query</span>
               </div>
-              <p className="mt-2 text-sm text-slate-400">
-                User input from <code className="text-slate-200">app/orders.py:6</code> reaches a
+              <p className="mt-2 text-sm text-[#667085]">
+                User input from <code className="text-[#344054]">app/orders.py:6</code> reaches a
                 SQL query built by string formatting. The sink is only visible through the call
                 graph — the diff alone does not show it.
               </p>
             </div>
           </div>
-          <dl className="mt-4 grid gap-3 border-t border-slate-800 pt-4 text-sm sm:grid-cols-4">
-            <div><dt className="text-xs uppercase tracking-wide text-slate-500">File</dt><dd className="mt-0.5 text-slate-200">app/orders.py:6</dd></div>
-            <div><dt className="text-xs uppercase tracking-wide text-slate-500">CWE</dt><dd className="mt-0.5 text-slate-200">CWE-89 — SQL Injection</dd></div>
-            <div><dt className="text-xs uppercase tracking-wide text-slate-500">Confidence</dt><dd className="mt-0.5 text-slate-200">0.94</dd></div>
-            <div><dt className="text-xs uppercase tracking-wide text-slate-500">Patch</dt><dd className="mt-0.5 text-slate-200">Parameterised query (validated)</dd></div>
+          <dl className="mt-4 grid gap-3 border-t border-[#e4e7ec] pt-4 text-sm sm:grid-cols-4">
+            <div><dt className="text-xs uppercase tracking-wide text-[#98a2b3]">File</dt><dd className="mt-0.5 text-[#344054]">app/orders.py:6</dd></div>
+            <div><dt className="text-xs uppercase tracking-wide text-[#98a2b3]">CWE</dt><dd className="mt-0.5 text-[#344054]">CWE-89 — SQL Injection</dd></div>
+            <div><dt className="text-xs uppercase tracking-wide text-[#98a2b3]">Confidence</dt><dd className="mt-0.5 text-[#344054]">0.94</dd></div>
+            <div><dt className="text-xs uppercase tracking-wide text-[#98a2b3]">Patch</dt><dd className="mt-0.5 text-[#344054]">Parameterised query (validated)</dd></div>
           </dl>
-          <p className="mt-4 text-xs text-slate-500">
+          <p className="mt-4 text-xs text-[#98a2b3]">
             This is the real finding from the live demo review of PR #42 — not a mock-up.
           </p>
         </Card>
@@ -151,12 +151,12 @@ export function Landing({ go, scrollTo, scrollNonce }: {
 
       {/* Features */}
       <section id="features" aria-labelledby="features-heading" className="mt-16">
-        <h2 id="features-heading" className="text-center text-2xl font-bold text-white">Built for review you can check</h2>
+        <h2 id="features-heading" className="text-center text-2xl font-bold text-[#101828]">Built for review you can check</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
             <Card key={f.title}>
-              <div className="font-semibold text-white">{f.title}</div>
-              <p className="mt-2 text-sm text-slate-400">{f.body}</p>
+              <div className="font-semibold text-[#101828]">{f.title}</div>
+              <p className="mt-2 text-sm text-[#667085]">{f.body}</p>
             </Card>
           ))}
         </div>
@@ -164,14 +164,14 @@ export function Landing({ go, scrollTo, scrollNonce }: {
 
       {/* How it works */}
       <section id="how" aria-labelledby="how-heading" className="mt-16">
-        <h2 id="how-heading" className="text-center text-2xl font-bold text-white">How it works</h2>
+        <h2 id="how-heading" className="text-center text-2xl font-bold text-[#101828]">How it works</h2>
         <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s) => (
             <li key={s.n}>
               <Card className="h-full">
-                <span aria-hidden="true" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">{s.n}</span>
-                <div className="mt-3 font-semibold text-white">{s.title}</div>
-                <p className="mt-1 text-sm text-slate-400">{s.body}</p>
+                <span aria-hidden="true" className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-[#182230] text-sm font-bold text-white">{s.n}</span>
+                <div className="mt-3 font-semibold text-[#101828]">{s.title}</div>
+                <p className="mt-1 text-sm text-[#667085]">{s.body}</p>
               </Card>
             </li>
           ))}
@@ -180,8 +180,8 @@ export function Landing({ go, scrollTo, scrollNonce }: {
 
       {/* Stats / trust band — verified figures only */}
       <section aria-labelledby="stats-heading" className="mt-16">
-        <h2 id="stats-heading" className="text-center text-2xl font-bold text-white">Measured, not claimed</h2>
-        <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-slate-400">
+        <h2 id="stats-heading" className="text-center text-2xl font-bold text-[#101828]">Measured, not claimed</h2>
+        <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-[#667085]">
           Every number below comes from a real, live index or evaluation run. {HONEST_LINE}
         </p>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -194,27 +194,27 @@ export function Landing({ go, scrollTo, scrollNonce }: {
 
       {/* Testimonials — clearly placeholder */}
       <section aria-labelledby="testimonials-heading" className="mt-16">
-        <h2 id="testimonials-heading" className="text-center text-2xl font-bold text-white">
-          What reviewers say <span className="text-base font-medium text-slate-400">— placeholder</span>
+        <h2 id="testimonials-heading" className="text-center text-2xl font-bold text-[#101828]">
+          What reviewers say <span className="text-base font-medium text-[#667085]">— placeholder</span>
         </h2>
-        <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-slate-400">
+        <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-[#667085]">
           Placeholder section: no reviewer quotes have been collected yet. These quotes are
           stand-ins for layout only and are not from real people.
         </p>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <Card>
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-[#344054]">
               “Placeholder quote — the call-graph evidence is what made us trust the findings
               enough to block merges on them.”
             </p>
-            <p className="mt-3 text-xs text-slate-500">— Placeholder reviewer, role TBD</p>
+            <p className="mt-3 text-xs text-[#98a2b3]">— Placeholder reviewer, role TBD</p>
           </Card>
           <Card>
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-[#344054]">
               “Placeholder quote — validated patches mean reviewers spend time judging the fix,
               not checking whether it applies.”
             </p>
-            <p className="mt-3 text-xs text-slate-500">— Placeholder reviewer, role TBD</p>
+            <p className="mt-3 text-xs text-[#98a2b3]">— Placeholder reviewer, role TBD</p>
           </Card>
         </div>
       </section>
@@ -223,8 +223,8 @@ export function Landing({ go, scrollTo, scrollNonce }: {
       <section aria-labelledby="oss-heading" className="mt-16">
         <Card className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 id="oss-heading" className="text-lg font-bold text-white">Free &amp; open source</h2>
-            <p className="mt-1 text-sm text-slate-400">
+            <h2 id="oss-heading" className="text-lg font-bold text-[#101828]">Free &amp; open source</h2>
+            <p className="mt-1 text-sm text-[#667085]">
               CodeSentry is open source. Read the code, run it yourself, or contribute.
             </p>
           </div>
@@ -232,7 +232,7 @@ export function Landing({ go, scrollTo, scrollNonce }: {
             href="https://github.com/Gautam825406/codesentry"
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+            className="rounded-lg bg-[#182230] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0b1526] focus:outline-none focus:ring-2 focus:ring-[#175cd3]/30"
           >
             View on GitHub
           </a>
@@ -241,20 +241,20 @@ export function Landing({ go, scrollTo, scrollNonce }: {
 
       {/* FAQ */}
       <section id="faq" aria-labelledby="faq-heading" className="mx-auto mt-16 max-w-3xl">
-        <h2 id="faq-heading" className="text-center text-2xl font-bold text-white">Frequently asked questions</h2>
+        <h2 id="faq-heading" className="text-center text-2xl font-bold text-[#101828]">Frequently asked questions</h2>
         <div className="mt-6 space-y-3">
           {FAQS.map((f) => (
-            <details key={f.q} className="rounded-xl border border-slate-800 bg-[#0b1226] px-5 py-4">
-              <summary className="cursor-pointer text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50 rounded">
+            <details key={f.q} className="rounded-lg border border-[#e4e7ec] bg-white px-5 py-4">
+              <summary className="cursor-pointer text-sm font-semibold text-[#101828] focus:outline-none focus:ring-2 focus:ring-[#175cd3]/30 rounded">
                 {f.q}
               </summary>
-              <p className="mt-2 text-sm text-slate-400">{f.a}</p>
+              <p className="mt-2 text-sm text-[#667085]">{f.a}</p>
             </details>
           ))}
         </div>
         <div className="mt-10 text-center">
           <Btn onClick={() => go("login")}>Run the live demo</Btn>
-          <p className="mt-3 text-xs text-slate-500">{HONEST_LINE}</p>
+          <p className="mt-3 text-xs text-[#98a2b3]">{HONEST_LINE}</p>
         </div>
       </section>
     </PublicShell>
